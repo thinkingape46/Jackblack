@@ -37,24 +37,48 @@ class Deck():
         print(f"{deckof52[-1]},{deckof52[-2]}")
     
 class Dealer():
-    def __init__(self):
+    def __init__(self,score=0,balance=100):
+
+        self.score = score
+        self.balance = balance
 
         deck = []
-        score = 0
-        balance = 100
-        card1 = deckof52[-1]
+        card1 = deckof52[-1][0]
+        score1 = deckof52[-1][1]
         deck.append(card1)
         deckof52.pop()
-        card2 = deckof52[-1]
+        card2 = deckof52[-1][0]
+        score2 = deckof52[-1][1]
         deck.append(card2)
         deckof52.pop()
-        print(deck)
+        newscore = score + (score1 + score2)
+        print(f"Dealers deck: {deck}")
+        print(f"Dealers score: {newscore}")
 
 class Player():
+    
+    def __init__(self,score=10,balance=100):
 
-    def __init__(self):
-        pass
+        self.score = score
+        self.balance = balance
+    
+        deck = []
+        card1 = deckof52[-1][0]
+        score1 = deckof52[-1][1]
+        deck.append(card1)
+        deckof52.pop()
+        card2 = deckof52[-1][0]
+        score2 = deckof52[-1][1]
+        deck.append(card2)
+        deckof52.pop()
+        newscore = score + (score1 + score2)
+        print(f"{name} deck: {deck}")
+        print(f"{name} score: {newscore}")
+
+name = input("Please enter your name:")        
 
 dealer1 = Dealer()
+player1 = Player()
 dealer1
+player1
 
