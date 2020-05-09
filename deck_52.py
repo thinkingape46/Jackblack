@@ -21,6 +21,7 @@ shuffle(deckof52)
         allcards.pop()
         print(f"The strength of current deck is {len(allcards)}")
 '''
+'''
 class Deck():
 
     def __init__(self,playername='Player'):
@@ -34,6 +35,7 @@ class Deck():
         self.playername = input("Please enter your name: ")
 
         pass
+'''
     
 class Dealer():
 
@@ -52,20 +54,28 @@ class Dealer():
         deck.append(card2)
         deckof52.pop()
         newscore = score + (score1 + score2)
-        print(f"Dealers deck: {deck}")
-        print(f"Dealers score: {newscore}")
+        print(f"Dealers deck: {deck[0]} **")
+        print(f"Dealers score: {newscore} + *")
+
+        player1.play()
         
 
 class Player():
     
-    def __init__(self, score = 0, bet = 0, balance = 100, deck = []):
+    def __init__(self, name = "player", score = 0, bet = 0, balance = 100, deck = []):
 
+        self.name  = name
         self.score = score
         self.balance = balance
         self.deck = deck
         self.bet = bet
 
+    def initialinput(self):
+
+        self.name = input("Please enter you name: ")
         self.bet = int(input("Please enter your bet amount: "))
+
+        Dealer()
 
         pass     
 
@@ -80,14 +90,14 @@ class Player():
         self.deck.append(card2)
         deckof52.pop()
         self.score = self.score + (score1 + score2)
-        print(f"{deck1.playername} deck: {self.deck}")
-        print(f"{deck1.playername} score: {self.score}")
+        print(f"{self.name}, your deck: {self.deck}")
+        print(f"and your score: {self.score}")
 
-        pass
+        player1.play2()
 
     def play2(self):
 
-        playeraction = input(f"\n{deck1.playername}, please choose between HIT or STAY: \n")
+        playeraction = input(f"\n{self.name}, please choose between HIT or STAY: \n")
                     
         if playeraction == 'hit':
             card2 = deckof52[-1][0]
@@ -96,9 +106,9 @@ class Player():
             deckof52.pop()
 
             self.score = self.score + score2
-            print(f"\n{deck1.playername}, you have chosen to HIT, here is your card: \n")
+            print(f"You have chosen to HIT, here is your card: \n")
             print(card2)
-            print(f"{deck1.playername}, your deck: {self.deck}")
+            print(f"{self.name}, your deck: {self.deck}")
             print(f"and your score: {self.score}")
 
             if self.score > 21:
@@ -115,15 +125,8 @@ class Player():
         elif playeraction == 'stay':
             pass
 
-
-
-
-deck1 = Deck()
-deck1.player()
-dealer1 = Dealer()
 player1 = Player()
-dealer1
-player1
-player1.play()
-player1.play2()
+player1.initialinput()
+
+
 
