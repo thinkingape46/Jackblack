@@ -16,6 +16,31 @@ from random import shuffle
 shuffle(deckof52)
 shuffle(deckof52)
 
+class TheGame():
+
+    def __init__(self, action = ' '):
+
+        self.action = action
+
+    def decision(self):
+
+        dec = input("Do you wish to play again? (yes or no)")
+
+        if dec == 'yes':
+            
+            dealer1.deck.clear()
+            player1.deck.clear()
+
+            dealer1.score = 0
+            player1.score = 0
+
+            player1.bet = int(input("Please enter your bet amount: "))
+
+            dealer1.run1()            
+
+        elif dec == 'no':
+            print("See you later!")
+
 class Cards():
 
     def score(self, value = 0):
@@ -27,19 +52,18 @@ class Cards():
         
         else:
             value = int(deckof52[-1][1])
-
+            
         return value
 
 
 class Dealer():
 
-    def __init__(self, name = "Dealer", score = 0, bet = 0, balance = 100, deck = []):
+    def __init__(self, name = "Dealer", score = 0, balance = 100, deck = []):
 
         self.name  = name
         self.score = score
         self.balance = balance
         self.deck = deck
-        self.bet = bet
     
     def run1(self):
 
@@ -64,20 +88,30 @@ class Dealer():
 
     def run2(self):
 
-        if self.score == player1.score == 21:
+        if self.score == 21 and player1.score == 21:
 
             print("It's a DRAW!")
+            print(f"{self.deck}")
+
+            thegame1.decision()
 
         elif self.score > 21:
 
             player1.balance = player1.balance + player1.bet
             print("\nDealer BUST!")
+            print(f"{self.deck}")
             print(f"You won the bet!, your balance now: {player1.balance}")
 
-        elif self.score > player1.score:
+            thegame1.decision()
+
+        elif self.score > player1.score and self.score < 21:
 
             print("Dealer has won!")
             print(f"{self.deck}")
+            player1.balance = player1.balance - player1.bet
+            print(f"Your balance now: {player1.balance}")
+
+            thegame1.decision()
 
         else:
             card3 = deckof52[-1][0]
@@ -94,11 +128,21 @@ class Dealer():
 
                 dealer1.run2()
 
+            elif self.score == 21 and player1.score == 21:
+
+                print("It's a DRAW!")
+                print(f"{self.deck}")
+
+                thegame1.decision()
+
             elif self.score > 21:
 
                 player1.balance = player1.balance + player1.bet
                 print("\nDealer BUST!")
-                print(f"You won the bet!, your balance now: {player1.balance}")        
+                print(f"{self.deck}")
+                print(f"You won the bet!, your balance now: {player1.balance}")
+
+                thegame1.decision()       
 
 class Player():
     
@@ -136,6 +180,7 @@ class Player():
         self.score = self.score + (score1 + score2)
         print(f"{self.name}, your deck: {self.deck}")
         print(f"and your score: {self.score}")
+        print(f"Your bet: {self.bet}")
 
         if self.score > 21:
             
@@ -169,14 +214,36 @@ class Player():
 
             if self.score > 21:
 
-                balance2 = self.balance - self.bet    
+                if 'A' in str(self.deck):
 
-                print("Dealer has won!")
-                print(f"Your balance now is ₹{balance2}\n")
-                print(f"Dealer deck: {dealer1.deck}")
-                print(f"Dealer score: {dealer1.score}")
+                    if self.score - 10 > 21:
+
+                        balance2 = self.balance - self.bet 
+                        print("Dealer has won!")
+                        print(f"Your balance now is ₹{balance2}\n")
+                        print(f"Dealer deck: {dealer1.deck}")
+                        print(f"Dealer score: {dealer1.score}")
+
+                        thegame1.decision()
+
+                    else:
+                        
+                        self.score = self.score + 10
+                        print("\nHARD HAND\n")
+                        player1.play2()
+
+                else:
+                    balance2 = self.balance - self.bet    
+
+                    print("Dealer has won!")
+                    print(f"Your balance now is ₹{balance2}\n")
+                    print(f"Dealer deck: {dealer1.deck}")
+                    print(f"Dealer score: {dealer1.score}")
+
+                    thegame1.decision()
 
                 pass
+            
             else:
                 player1.play2()
 
@@ -186,6 +253,7 @@ class Player():
 player1 = Player()
 dealer1 = Dealer()
 cards1 = Cards()
+thegame1 = TheGame()
 player1.initialinput()
 
 
