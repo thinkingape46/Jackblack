@@ -10,17 +10,33 @@ jk = [a+b for a in suitlist for b in jkq]
 
 cdhs_tuples = list(zip(cdhs,cardvalues*10))
 jk_tuples = list(zip(jk,jkq_values*4))
-deckof52 = cdhs_tuples + jk_tuples
+
 
 from random import shuffle
-shuffle(deckof52)
-shuffle(deckof52)
+
 
 class TheGame():
 
-    def __init__(self, action = ' '):
+    def __init__(self, action = ' ', deckof52 = []):
 
         self.action = action
+        self.deckof52 = deckof52
+
+    def deck(self):
+
+        thegame1.deckof52 = cdhs_tuples + jk_tuples
+        shuffle(thegame1.deckof52)
+
+        player1.initialinput()
+
+    def deck2(self):
+
+        thegame1.deckof52 = cdhs_tuples + jk_tuples
+        shuffle(thegame1.deckof52)
+        shuffle(thegame1.deckof52)
+
+        dealer1.run1()      
+            
 
     def decision(self):
 
@@ -38,7 +54,7 @@ class TheGame():
             player1.bet = int(input("Please enter your bet amount: "))
             player1.balance = player1.balance - player1.bet
 
-            dealer1.run1()            
+            thegame1.deck2()            
 
         elif dec == 'no':
             print("See you later!")
@@ -50,37 +66,38 @@ class Cards():
 
         self.value = value
         
-        if deckof52[-1][1] == 'A':
+        if thegame1.deckof52[-1][1] == 'A':
             value = 11
         
         else:
-            value = int(deckof52[-1][1])
+            value = int(thegame1.deckof52[-1][1])
             
         return value
 
 
 class Dealer():
 
-    def __init__(self, name = "Dealer", score = 0, balance = 100, deck = []):
+    def __init__(self, name = "Dealer", score = 0, balance = 100, deck = [], tempscore = 0):
 
         self.name  = name
         self.score = score
         self.balance = balance
         self.deck = deck
+        self.tempscore = tempscore
     
     def run1(self):
 
-        card1 = deckof52[-1][0]
+        card1 = thegame1.deckof52[-1][0]
         self.deck.append(card1)
         cards1.score()
         score1 = cards1.score()        
-        deckof52.pop()
+        thegame1.deckof52.pop()
 
-        card2 = deckof52[-1][0]
+        card2 = thegame1.deckof52[-1][0]
         self.deck.append(card2)
         cards1.score()
         score2 = cards1.score()        
-        deckof52.pop()
+        thegame1.deckof52.pop()
 
         self.score = self.score + (score1 + score2)
 
@@ -98,28 +115,53 @@ class Dealer():
 
             thegame1.decision()
 
-        elif self.score > 21:
+        elif dealer1.score > 21:
 
-            if 'A' in str(self.deck):
+            if 'A' in str(dealer1.deck):
 
+                no_of_aces = []
+                                
+                for char in str(dealer1.deck):
+                
+                    if char == 'A':
+                        no_of_aces.append(char)
+                    else:
+                        pass
+                
+                na = len(no_of_aces)
+            
+                n = 1
+                
+                while n < na + 1:
 
-                if self.score - 10 > 21:
+                    dealer1.tempscore = dealer1.score - 10*n
+                    
+                    if dealer1.tempscore > 21:
 
-                    '''Dealer busts here'''
+                        n += 1
+
+                    else:
+
+                        break
+                
+                if dealer1.tempscore > 21:
+
                     dealer1.dealerbusts()
 
                 else:
-                        
-                    self.score = self.score - 10
-                    print(f"{self.deck}\n")
-                    dealer1.run2()
+
+                    print("\nDEALER HARD HAND")
+                    print(f"Dealer deck: {dealer1.deck}")
+                    print(f"Dealer score: {min(dealer1.score, dealer1.tempscore)}")
+
+                    dealer1.dealer_ace_run()
 
             else:
                 
                 '''Dealer busts here'''
                 dealer1.dealerbusts()
 
-        elif self.score > player1.score and self.score < 21:
+        elif dealer1.score > player1.score and dealer1.score < 21:
 
             '''Dealer wins here'''
             dealer1.dealerwins()
@@ -130,34 +172,33 @@ class Dealer():
             dealer1.dealerwins()
 
         else:
-            card3 = deckof52[-1][0]
+            card3 = thegame1.deckof52[-1][0]
             self.deck.append(card3)
             cards1.score()
             score3 = cards1.score() 
-            deckof52.pop()
+            thegame1.deckof52.pop()
             self.score = self.score + score3
-
-            print(f"\nDealers deck: {self.deck}")
-            print(f"Dealers score: {self.score}")
 
             dealer1.run2()
 
-            if self.score < 21:
+    def dealer_ace_run(self):
 
-                dealer1.run2()
+        temptotal = min(dealer1.score, dealer1.tempscore)
 
-            elif self.score == 21 and player1.score == 21:
+        card4 = thegame1.deckof52[-1][0]
+        self.deck.append(card4)
+        cards1.score()
+        score3 = cards1.score() 
+        thegame1.deckof52.pop()
+        
+        self.score = self.score + score3
 
-                print("It's a DRAW!")
-                print(f"{self.deck}")
-                player1.balance = player1.balance + player1.bet
+        print(f"\nDealers deck: {self.deck}")
+        print(f"Dealers score: {temptotal + score3}")
 
-                thegame1.decision()
+        dealer1.run2()       
 
-            elif self.score > 21:
-
-                '''Dealer busts here'''
-                dealer1.dealerbusts()
+        pass
 
     def dealerwins(self):
 
@@ -171,7 +212,7 @@ class Dealer():
         print(f"Your score: {player1.score}")
         print(f"Your balance: {player1.balance}")
 
-        print(f"\n{len(deckof52)}")
+        print(f"\n{len(thegame1.deckof52)}")
 
         thegame1.decision()
 
@@ -187,7 +228,7 @@ class Dealer():
         print(f"Your score: {player1.score}")
         print(f"Your balance: {player1.balance}")
 
-        print(f"\n{len(deckof52)}")
+        print(f"\n{len(thegame1.deckof52)}")
 
         thegame1.decision()
 
@@ -213,17 +254,17 @@ class Player():
 
     def play(self):      
     
-        card1 = deckof52[-1][0]
+        card1 = thegame1.deckof52[-1][0]
         self.deck.append(card1)        
         cards1.score()
         score1 = cards1.score()  
-        deckof52.pop()
+        thegame1.deckof52.pop()
 
-        card2 = deckof52[-1][0]
+        card2 = thegame1.deckof52[-1][0]
         self.deck.append(card2)
         cards1.score()
         score2 = cards1.score() 
-        deckof52.pop()
+        thegame1.deckof52.pop()
 
         self.score = self.score + (score1 + score2)
         print(f"{self.name}, your deck: {self.deck}")
@@ -244,11 +285,11 @@ class Player():
                     
         if playeraction == 'hit':
 
-            card3 = deckof52[-1][0]
+            card3 = thegame1.deckof52[-1][0]
             self.deck.append(card3)
             cards1.score()
             score3 = cards1.score()            
-            deckof52.pop()
+            thegame1.deckof52.pop()
 
             self.score = self.score + score3
             print(f"You have chosen to HIT, here is your card: \n")
@@ -268,7 +309,7 @@ class Player():
                     else:
                         
                         self.score = self.score - 10
-                        print("\nHARD HAND\n")
+                        print("\nYou have a HARD HAND\n")
                         print(f"Your deck now: {self.deck}")
                         print(f"and your score: {self.score}")
                         player1.play2()
@@ -294,7 +335,7 @@ player1 = Player()
 dealer1 = Dealer()
 cards1 = Cards()
 thegame1 = TheGame()
-player1.initialinput()
+thegame1.deck()
 
 
 
