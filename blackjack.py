@@ -27,6 +27,25 @@ class TheGame():
         thegame1.deckof52 = cdhs_tuples + jk_tuples
         shuffle(thegame1.deckof52)
 
+        print("\nWELCOME TO BLACKJACK!\n")
+
+        player1.initialinput()
+
+    def restart(self):
+
+        thegame1.deckof52 = cdhs_tuples + jk_tuples
+        shuffle(thegame1.deckof52)
+
+        dealer1.deck.clear()
+        player1.deck.clear()
+
+        dealer1.score = 0
+        player1.score = 0
+        player1.bet = 0
+        player1.balance = 100
+
+        print("\nWELCOME TO BLACKJACK!\n")
+
         player1.initialinput()
 
     def deck2(self):
@@ -34,15 +53,69 @@ class TheGame():
         thegame1.deckof52 = cdhs_tuples + jk_tuples
         shuffle(thegame1.deckof52)
         shuffle(thegame1.deckof52)
+        dealer1.deck.clear()
+        player1.deck.clear()
+        dealer1.score = 0
+        player1.score = 0
+        player1.bet = 0
 
-        dealer1.run1()      
-            
+        while True:
+
+                try:
+                    
+                    player1.bet = int(input("Please enter your bet amount: "))
+
+                except:
+
+                    print("\nOnly enter positive integers for a bet!\n")
+                    continue
+
+                if player1.bet == 0:
+
+                    print("\nOnly enter positive integers for a bet!\n")
+                    continue
+
+                if player1.bet < 0:
+
+                    print("\nOnly enter positive integers for a bet!\n")
+                    continue
+
+                if player1.bet > player1.balance:
+
+                    print("\nSorry! no funds, try reducing your bets.\n")
+                    continue
+
+                else:
+
+                    break
+
+        player1.balance = player1.balance - player1.bet
+
+        dealer1.run1()            
 
     def decision(self):
 
-        dec = input("Do you wish to play again? (yes or no): ")
+        while True:
 
-        if dec == 'yes':
+            try:
+
+                dec = input("Do you wish to play again? (yes or no): ")
+
+            except:
+
+                print("Please enter only 'yes' or 'no'")
+                continue
+
+            if dec == 'yes' or dec == 'no' or dec == 'oui' or dec == 'non':
+                
+                break
+
+            else:
+
+                print("\nPlease enter only 'yes' or 'no': \n")
+                continue
+
+        if dec == 'yes' or dec == "oui":
             
             dealer1.deck.clear()
             player1.deck.clear()
@@ -50,13 +123,10 @@ class TheGame():
             dealer1.score = 0
             player1.score = 0
             player1.bet = 0
+            
+            thegame1.restart()            
 
-            player1.bet = int(input("Please enter your bet amount: "))
-            player1.balance = player1.balance - player1.bet
-
-            thegame1.deck2()            
-
-        elif dec == 'no':
+        elif dec == 'no' or dec == 'non':
             print("See you later!")
             exit()
 
@@ -113,11 +183,11 @@ class Dealer():
             print("It's a DRAW!")
             print(f"{self.deck}")
 
-            thegame1.decision()
+            thegame1.deck2()        
 
-        elif dealer1.score > 21:
+        elif 'A' in str(dealer1.deck):
 
-            if 'A' in str(dealer1.deck):
+            if dealer1.score > 21:
 
                 no_of_aces = []
                                 
@@ -143,8 +213,12 @@ class Dealer():
                     else:
 
                         break
+
+                if dealer1.tempscore == 21:
+
+                    dealer1.dealerwins()
                 
-                if dealer1.tempscore > 21:
+                elif dealer1.tempscore > 21:
 
                     dealer1.dealerbusts()
 
@@ -156,10 +230,8 @@ class Dealer():
 
                     dealer1.dealer_ace_run()
 
-            else:
-                
-                '''Dealer busts here'''
-                dealer1.dealerbusts()
+            else:                
+                dealer1.dealer_ace_run()
 
         elif dealer1.score > player1.score and dealer1.score < 21:
 
@@ -170,6 +242,10 @@ class Dealer():
 
             '''Dealer wins here'''
             dealer1.dealerwins()
+
+        elif dealer1.score > 21:
+
+            dealer1.dealerbusts()
 
         else:
             card3 = thegame1.deckof52[-1][0]
@@ -200,7 +276,14 @@ class Dealer():
 
         pass
 
-    def dealerwins(self):
+    def player_crosses_21(self):
+
+        if dealer1.score > 21 and 'A' in str(dealer1.deck):
+
+            dealer1.score = dealer1.score - 10
+
+        else:
+            pass
 
         dealer1.balance = dealer1.balance + player1.bet
 
@@ -208,13 +291,52 @@ class Dealer():
         print(f"Dealer deck: {dealer1.deck}")
         print(f"Dealer score: {dealer1.score}\n")
 
+
         print(f"Your deck: {player1.deck}")
         print(f"Your score: {player1.score}")
+        
         print(f"Your balance: {player1.balance}")
 
         print(f"\n{len(thegame1.deckof52)}")
 
-        thegame1.decision()
+        print(f"temp scores: {player1.tempscore},{dealer1.tempscore}")
+
+        thegame1.deck2()
+
+    def dealerwins(self):
+
+        dealer1.balance = dealer1.balance + player1.bet
+
+        print("\nDEALER WON!")
+        print(f"Dealer deck: {dealer1.deck}")
+
+        if 'A' in str(dealer1.deck) and dealer1.score > 21:
+            print(f"Dealer score: {dealer1.tempscore}\n")
+        else:
+            print(f"Dealer score: {dealer1.score}\n")
+        
+        print(f"Your deck: {player1.deck}")
+
+        if 'A' in str(player1.deck) and player1.score > 21:
+            print(f"Your score: {player1.tempscore}")
+        else:
+            print(f"Your score: {player1.score}")
+        
+        print(f"Your balance: {player1.balance}")
+
+        print(f"\n{len(thegame1.deckof52)}")
+
+        print(f"temp scores: {player1.tempscore},{dealer1.tempscore}")
+        
+        if player1.balance <= 0:
+            print("Sorry! No funds, you can't play anymore")
+            print("\n")
+            print("\nRESTARTING....\n")
+            player1.balance = 100
+            thegame1.decision()
+        
+        elif player1.balance > 0:
+            thegame1.deck2()
 
     def dealerbusts(self):
 
@@ -222,40 +344,82 @@ class Dealer():
 
         print("\nDEALER BUST!")
         print(f"Dealer deck: {dealer1.deck}")
-        print(f"Dealer score: {dealer1.score}\n")
+
+        if 'A' in str(dealer1.deck) and dealer1.score > 21:
+            print(f"Dealer score: {dealer1.tempscore}\n")
+        else:
+            print(f"Dealer score: {dealer1.score}\n")
 
         print(f"Your deck: {player1.deck}")
-        print(f"Your score: {player1.score}")
+
+        if 'A' in str(player1.deck) and player1.score > 21:
+            print(f"Your score: {player1.tempscore}")
+        else:
+            print(f"Your score: {player1.score}")
+
         print(f"Your balance: {player1.balance}")
 
         print(f"\n{len(thegame1.deckof52)}")
 
-        thegame1.decision()
+        print(f"temp scores: {player1.tempscore},{dealer1.tempscore}")
+
+        thegame1.deck2()
 
 class Player():
     
-    def __init__(self, name = "player", score = 0, bet = 0, balance = 100, deck = []):
+    def __init__(self, name = "player", score = 0, bet = 0, balance = 100, deck = [], tempscore = 0):
 
         self.name  = name
         self.score = score
         self.balance = balance
         self.deck = deck
         self.bet = bet
+        self.tempscore = tempscore
 
     def initialinput(self):
 
         self.name = input("Please enter you name: ")
-        self.bet = int(input("Please enter your bet amount: "))
+
+        while True:
+
+            try:
+                
+                player1.bet = int(input("Please enter your bet amount: "))
+
+            except:
+
+                print("\nOnly enter positive integers for a bet!\n")
+                continue
+
+            if player1.bet == 0:
+
+                print("\nOnly enter positive integers for a bet!\n")
+                continue
+
+            if player1.bet < 0:
+
+                print("\nOnly enter positive integers for a bet!\n")
+                continue
+
+            if player1.bet > player1.balance:
+
+                print("\nSorry! no funds, try reducing your bets.\n")
+                continue
+
+            else:
+
+                break
+        
         player1.balance = player1.balance - player1.bet
 
         dealer1.run1()
 
-        pass     
+        pass
 
-    def play(self):      
-    
+    def play(self):
+
         card1 = thegame1.deckof52[-1][0]
-        self.deck.append(card1)        
+        self.deck.append(card1)
         cards1.score()
         score1 = cards1.score()  
         thegame1.deckof52.pop()
@@ -266,12 +430,12 @@ class Player():
         score2 = cards1.score() 
         thegame1.deckof52.pop()
 
-        self.score = self.score + (score1 + score2)
+        player1.score = self.score + (score1 + score2)
         print(f"{self.name}, your deck: {self.deck}")
         print(f"and your score: {self.score}")
         print(f"Your bet: {player1.bet}")
 
-        if self.score == 21:
+        if player1.score == 21:
 
             dealer1.run2()
 
@@ -281,7 +445,23 @@ class Player():
 
     def play2(self):
 
-        playeraction = input(f"\n{self.name}, please choose between HIT or STAY: \n")
+        while True:
+
+            try:
+
+                playeraction = input(f"\n{self.name}, please enter either hit or stand: \n")
+            
+            except:
+
+                print("\nPlease enter only 'hit' or 'stand': \n")
+
+            if playeraction == 'hit' or playeraction == 'stand':
+
+                break
+
+            else:
+
+                continue
                     
         if playeraction == 'hit':
 
@@ -295,48 +475,91 @@ class Player():
             print(f"You have chosen to HIT, here is your card: \n")
             print(card3)
             print(f"Your deck now: {self.deck}")
-            print(f"and your score: {self.score}")
+            print(f"and your score: {self.score}")            
 
-            if self.score > 21:
+            if 'A' in str(player1.deck):
 
-                if 'A' in str(self.deck):
+                if self.score > 21:
+                    
+                    no_of_aces = []
+                                
+                    for char in str(player1.deck):
 
-                    if self.score - 10 > 21:
+                        if char == 'A':
+                            no_of_aces.append(char)
 
-                        '''Dealer wins here'''
+                        else:
+
+                            pass
+                
+                    na = len(no_of_aces)
+            
+                    n = 1
+                
+                    while n < na + 1:
+
+                        player1.tempscore = player1.score - 10*n
+                        
+                        if player1.tempscore > 21:
+
+                            n += 1
+
+                        else:
+
+                            break
+
+                    if player1.tempscore == 21:
+
+                        player1.player_ace_run()
+                
+                    if player1.tempscore > 21:
+
                         dealer1.dealerwins()
 
                     else:
-                        
-                        self.score = self.score - 10
-                        print("\nYou have a HARD HAND\n")
-                        print(f"Your deck now: {self.deck}")
-                        print(f"and your score: {self.score}")
-                        player1.play2()
+
+                        print("\nYou have a HARD HAND!")
+                        print(f"You deck: {player1.deck}")
+                        print(f"Your score: {min(player1.score, player1.tempscore)}")
+
+                        player1.player_ace_run()
 
                 else:
-                    
-                    '''Dealer wins here'''
-                    dealer1.dealerwins()
 
-                pass
+                    player1.player_ace_run()         
 
-            elif self.score == 21:
+            elif player1.score == 21:
 
-                player1.play2()
+                dealer1.run2()
+
+            elif player1.score > 21:
+
+                dealer1.dealerwins()   
             
             else:
                 player1.play2()
 
-        elif playeraction == 'stay':
+        elif playeraction == 'stand':
             dealer1.run2()
+
+    def player_ace_run(self):
+
+        temptotal = min(player1.score, player1.tempscore)
+
+        if temptotal == 0:
+
+            print(f"\nYour deck: {self.deck}")
+            print(f"Your score: {player1.score}")
+
+        else:
+
+            print(f"\nYour deck: {self.deck}")
+            print(f"Your score: {temptotal}")
+
+        player1.play2()
 
 player1 = Player()
 dealer1 = Dealer()
 cards1 = Cards()
 thegame1 = TheGame()
 thegame1.deck()
-
-
-
-
